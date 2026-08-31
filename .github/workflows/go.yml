@@ -27,17 +27,14 @@ jobs:
 
       - name: Create / Update Latest Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v1
+        uses: svenstaro/upload-release-action@v2
         with:
-          tag_name: latest
-          name: "Latest Release"
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: latest                    # 固定标签
+          file: myapp-*                  # 匹配两个二进制文件
+          file_glob: true                # 启用通配符
+          overwrite: true                # ✅ 覆盖已有资产
+          body: "Latest build from main branch"  # 可选，Release 描述
+          release_name: "Latest Release" # 可选
           draft: false
           prerelease: false
-          files: |
-            myapp-windows-amd64.exe
-            myapp-linux-amd64
-          allow_updates: true           # ✅ 允许更新已存在的 Release（替代 overwrite）
-          # 可选：生成自动变更日志
-          # generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
