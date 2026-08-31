@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: [ "main" ]          # 仅当推送到 main 分支时触发（包括 PR 合并）
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]          # PR 触发但不发布 Release
+    branches: [ "main" ]
 
 jobs:
   build-and-release:
@@ -17,28 +17,25 @@ jobs:
         with:
           go-version: '1.20'
 
-      # 编译 Windows 和 Linux 版本
       - name: Build for Windows and Linux
         run: |
-          GOOS=windows GOARCH=amd64 go build -o myapp-windows-amd64.exe -v ./...
-          GOOS=linux   GOARCH=amd64 go build -o myapp-linux-amd64   -v ./...
+          GOOS=windows GOARCH=amd64 go build -o myapp-windows-amd64.exe -v .
+          GOOS=linux   GOARCH=amd64 go build -o myapp-linux-amd64   -v .
 
-      # 运行测试（可选）
       - name: Test
         run: go test -v ./...
 
-      # 发布到 Latest Release（仅在 push 到 main 时执行）
       - name: Create / Update Latest Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: latest                # 使用固定的标签名
-          name: "Latest Release"          # Release 名称
+          tag_name: latest
+          name: "Latest Release"
           draft: false
-          prerelease: false               # 正式版
-          files: |                        # 上传的二进制文件（支持通配符）
+          prerelease: false
+          files: |
             myapp-windows-amd64.exe
             myapp-linux-amd64
-          overwrite: true                 # 覆盖同名资产（避免重复上传报错）
+          overwrite: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
