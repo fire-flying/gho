@@ -36,6 +36,8 @@ jobs:
           files: |
             myapp-windows-amd64.exe
             myapp-linux-amd64
-          overwrite: true
+          allow_updates: true           # ✅ 允许更新已存在的 Release（替代 overwrite）
+          # 可选：生成自动变更日志
+          # generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
